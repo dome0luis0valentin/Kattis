@@ -24,8 +24,7 @@ class Node:
 
 class SubSets:
     def __init__(self):
-        self.collection = []
-        self.totalSets = 0
+        self.collection = set([])
 
     def findRep(a_node):
         """
@@ -42,9 +41,7 @@ class SubSets:
     def add(self,num1,num2):
         n1 = Node(num1)
         n2 = Node(num2)
-        b1 = n1 in self.collection
-        b2 = n2 in self.collection
-        if  b1 == True and b2 == False :
+        if  n1 in self.collection  and  !n2 in self.collection:
             n2.setRep(n1)
-            self.collection.append(n2)
+            self.collection.add(n2)
         elif
