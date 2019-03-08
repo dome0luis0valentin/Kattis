@@ -1,47 +1,41 @@
-class Node:
-    def __init__(self,data):
-        self.key = data
-        self.classRep = None
+import sys
 
-    def setRep(self,a_node):
-        self.classRep = a_nod
+class DSF:
+  def __init__(self,n):
+    self.rank = [0 for i in xrange(n)]
+    self.parent = [i for i in xrange(n)]
 
-    def __eq__(self,other):
-        if type(other) == type(self.key):
-            return self.key == other
-        return self.data == other.key
+  def find(self, x):
+    p = self.parent[x]
+    while p!=x:
+      self.parent[x] = self.parent[p]
+      x = self.parent[x]
+      p = self.parent[x]
+    return x
 
-    def __ne__(self,other):
-        return not self.__eq__(other)
+  def union(self,x,y):
+    x,y = self.find(x), self.find(y)
 
-    def __ge__(self,other):
-        if type(self.key) == type(other):
-            return self.key > other
-        return self.key > other.key
+    if x==y: return
 
-    def __hash__(self):
-        return self.key.__hash__()
+    if self.rank[x] < self.rank[y]:
+      x,y = y,x
+    self.parent[y] = x
+    if self.rank[x] == self.rank[y]:
+      self.rank[x] +=1
 
-class SubSets:
-    def __init__(self):
-        self.collection = set([])
+def main():
+  n,q = [int(i) for i in sys.stdin.readline().split()]
+  disjoint_set = DSF(n)
+  for line in sys.stdin:
+    op,x,y = line.split()
+    if op == "=":
+      disjoint_set.union(int(x),int(y))
+    else:
+      if disjoint_set.find(int(x)) == disjoint_set.find(int(y)):
+        print "yes"
+      else:
+        print "no"
 
-    def findRep(a_node):
-        """
-        Recursive method to find the representative of a node.
-        After finding top rep, nodes are relinked to make further lookups
-        easy.
-        """
-        if a_node.classRep == None:
-            return a_node
-        rep = findRep(a_node.classRep)
-        a_node.setRep(rep)
-        return rep
-
-    def add(self,num1,num2):
-        n1 = Node(num1)
-        n2 = Node(num2)
-        if  n1 in self.collection  and  !n2 in self.collection:
-            n2.setRep(n1)
-            self.collection.add(n2)
-        elif
+if __name__ == "__main__":
+  main()
