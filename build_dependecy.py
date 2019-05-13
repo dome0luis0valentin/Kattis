@@ -1,55 +1,42 @@
 import sys
 from collections import defaultdict
 
-dependency_order = []
-seen = set()
-
-def topological_sort(graph, start):
-  seen.add(start)
-  for i in graph[start]:
-      if i not in seen:
-        topological_sort(graph,i)
-  dependency_order.append(start)
-
-def dfs(graph,start):
-  path = []
-  stack = [start]
-  label = len(graph)
-  result = {}
-  while stack != []:
-    for element in stack:
-      if element not in result:
-        result[element] = label
-        label = label -1
-    v = stack.pop()
-    if v not in path: path.append(v)
-    for w in reversed(graph[v]):
-      if w not in path and not w in stack:
-          stack.append(w)
-
-  return path
-
 def main():
   n = int(sys.stdin.readline().strip())
   graph = defaultdict(list)
+  degrees = {}
+  zeros = set()
   for i in xrange(n):
     rule = sys.stdin.readline()
     child, parents = [k.strip() for k in rule.split(":")]
     parents = parents.split()
-
+    degrees[child] = len(parents)
+    if degrees[child] == 0:
+      zeros.add(child)
     for p in parents:
-      if p in graph:
-        graph[p].append(child)
-      else:
-        graph[p] = [child]
+      graph[p].append(child)
   changed_file = sys.stdin.readline().strip()
-  if n < 100:
-    topological_sort(graph, changed_file)
-    order = reversed(dependency_order)
-  else:
-    order = dfs(graph, changed_file)
-  for i in order:
-    print i
+  if changed_file in zeros:
+    zeros.remove(changed_file)
+  # Remove non startfile dependecy
+  while zeros:
+    curr = zeros.pop()
+    for n in graph[curr]:
+      degrees[n] -= 1
+      if degrees[n] == 0 and n != changed_file:
+        zeros.add(n)
+
+  # Topological Sort
+  zeros = [changed_file]
+  while zeros:
+    curr = zeros.pop()
+    print curr
+    for n in graph[curr]:
+      degrees[n] -= 1
+      if degrees[n] == 0:
+        zeros.append(n)
+
+
 
 if __name__ == '__main__':
   main()
